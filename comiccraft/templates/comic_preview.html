@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComicCraft - Your Comic Preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 20px 14px 50px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #efefef;
+      color: #111;
+    }
+    .container { max-width: 940px; margin: 0 auto; }
+    h1 { text-align: center; color: #3b3b3b; margin: 6px 0 20px; }
+    .panel {
+      background: #fff;
+      border-radius: 10px;
+      padding: 14px 16px 18px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .panel h2 { margin: 6px 0 12px; font-size: 22px; }
+    .panel img {
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .scene { font-style: italic; color: #555; margin: 4px 0 10px; line-height: 1.45; }
+    .text { white-space: pre-line; line-height: 1.5; margin: 0; }
+    .missing { color: #a12622; font-size: 14px; }
+    .warning {
+      background: #fff6db;
+      border: 1px solid #f0d98a;
+      color: #6b5200;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      word-break: break-word;
+    }
+    .actions { text-align: center; margin-top: 10px; }
+    .btn {
+      display: inline-block;
+      padding: 13px 26px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      background: #0066cc;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #004f9e; }
+    .link { display: block; margin-top: 16px; color: #0066cc; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>&#128214; Your Comic Preview</h1>
+
+    {% if warning %}
+    <div class="warning">&#9888;&#65039; {{ warning }}</div>
+    {% endif %}
+
+    {% for panel in layout %}
+    <div class="panel">
+      <h2>Panel {{ panel.panel }}: {{ panel.title }}</h2>
+      {% if panel.image_url %}
+      <img src="{{ panel.image_url }}" alt="Panel {{ panel.panel }}: {{ panel.title }}">
+      {% else %}
+      <p class="missing">Image not available.</p>
+      {% endif %}
+      {% if panel.scene_description %}
+      <p class="scene">{{ panel.scene_description }}</p>
+      {% endif %}
+      {% if panel.text %}
+      <p class="text">{{ panel.text }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="actions">
+      <a id="download-btn" class="btn" href="{{ pdf_path }}" download>&#128229; Download Your Comic as PDF</a>
+      <a class="link" href="/">&larr; Create a different comic</a>
+    </div>
+  </div>
+
+  <script>
+    // After the PDF download starts, go to the success page.
+    var pdfPath = {{ pdf_path|tojson }};
+    document.getElementById("download-btn").addEventListener("click", function () {
+      setTimeout(function () {
+        window.location.href = "/export-success?pdf_path=" + encodeURIComponent(pdfPath);
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
